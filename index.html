@@ -437,10 +437,10 @@ footer p{color:var(--muted);font-size:.83rem;margin-bottom:.4rem}
     <h2 class="sec-ttl">Let's Connect</h2>
     <div class="con-g">
       <div class="cf fu">
-        <form id="cform">
-          <div class="ff"><label>YOUR NAME</label><input type="text" placeholder="Rahul Sharma" required></div>
-          <div class="ff"><label>EMAIL ADDRESS</label><input type="email" placeholder="rahul@company.com" required></div>
-          <div class="ff"><label>MESSAGE</label><textarea rows="5" placeholder="Tell me about your project or opportunity..." required></textarea></div>
+        <form id="cform" action="https://formspree.io/f/mredzjyq" method="POST">
+          <div class="ff"><label>YOUR NAME</label><input type="text" name="name" placeholder="Rahul Sharma" required></div>
+          <div class="ff"><label>EMAIL ADDRESS</label><input type="email" name="email" placeholder="rahul@company.com" required></div>
+          <div class="ff"><label>MESSAGE</label><textarea name="message" rows="5" placeholder="Tell me about your project or opportunity..." required></textarea></div>
           <button type="submit" class="btn-p" id="sbtn" style="width:100%;text-align:center">Send Message</button>
         </form>
       </div>
@@ -541,11 +541,43 @@ const obs=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.targ
 document.querySelectorAll('.fu').forEach(el=>obs.observe(el));
 
 // FORM
-document.getElementById('cform').addEventListener('submit',e=>{
+document.getElementById('cform').addEventListener('submit', async (e) => {
   e.preventDefault();
-  const btn=document.getElementById('sbtn');
-  btn.textContent='✓ Message Sent!'; btn.style.background='#059669';
-  setTimeout(()=>{btn.textContent='Send Message';btn.style.background='';e.target.reset();},3000);
+  const btn = document.getElementById('sbtn');
+  const form = e.target;
+  
+  try {
+    btn.textContent = '⏳ Sending...';
+    btn.disabled = true;
+    
+    const response = await fetch(form.action, {
+      method: 'POST',
+      body: new FormData(form),
+      headers: { 'Accept': 'application/json' }
+    });
+    
+    if (response.ok) {
+      btn.textContent = '✓ Message Sent!';
+      btn.style.background = '#059669';
+      setTimeout(() => {
+        btn.textContent = 'Send Message';
+        btn.style.background = '';
+        btn.disabled = false;
+        form.reset();
+      }, 3000);
+    } else {
+      throw new Error('Form submission failed');
+    }
+  } catch (error) {
+    btn.textContent = '✗ Error Sending';
+    btn.style.background = '#dc2626';
+    setTimeout(() => {
+      btn.textContent = 'Send Message';
+      btn.style.background = '';
+      btn.disabled = false;
+    }, 3000);
+    console.error('Error:', error);
+  }
 });
 
 // CUBE MOUSE INTERACTION
