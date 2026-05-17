@@ -1,386 +1,1174 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pawan Tiwari - Automation QA Engineer</title>
-    <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pawan Tiwari — Automation QA Engineer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #050505;
+    --bg2: #0a0a0a;
+    --surface: #111111;
+    --border: rgba(255,255,255,0.07);
+    --text: #f0ede8;
+    --muted: rgba(240,237,232,0.45);
+    --accent: #c8f542;
+    --accent2: #f5d442;
+    --white: #ffffff;
+    --mono: 'DM Mono', monospace;
+    --serif: 'Cormorant Garamond', serif;
+    --sans: 'Syne', sans-serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* CURSOR */
+  .cursor {
+    position: fixed;
+    width: 8px; height: 8px;
+    background: var(--accent);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transition: transform 0.15s ease;
+    transform: translate(-50%, -50%);
+  }
+  .cursor-ring {
+    position: fixed;
+    width: 36px; height: 36px;
+    border: 1px solid rgba(200,245,66,0.4);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9998;
+    transition: transform 0.08s linear, width 0.3s, height 0.3s, border-color 0.3s;
+    transform: translate(-50%, -50%);
+  }
+  .cursor-ring.hover { width: 60px; height: 60px; border-color: var(--accent); }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 28px 52px;
+    mix-blend-mode: normal;
+  }
+  .nav-logo {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: var(--text);
+    text-decoration: none;
+    text-transform: uppercase;
+  }
+  .nav-links {
+    display: flex;
+    gap: 40px;
+    list-style: none;
+  }
+  .nav-links a {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    color: var(--muted);
+    text-decoration: none;
+    text-transform: uppercase;
+    transition: color 0.3s;
+  }
+  .nav-links a:hover { color: var(--accent); }
+
+  /* HERO */
+  #hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 0 52px 80px;
+    overflow: hidden;
+  }
+  .hero-bg-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+    background-size: 80px 80px;
+    opacity: 0.6;
+  }
+  .hero-bg-radial {
+    position: absolute;
+    top: -20%; right: -10%;
+    width: 700px; height: 700px;
+    background: radial-gradient(circle, rgba(200,245,66,0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-noise {
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    opacity: 0.4;
+    pointer-events: none;
+  }
+
+  .hero-eyebrow {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.25em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 32px;
+    opacity: 0;
+    animation: fadeUp 1s ease 0.2s forwards;
+  }
+
+  .hero-name {
+    font-family: var(--serif);
+    font-size: clamp(72px, 10vw, 160px);
+    font-weight: 300;
+    line-height: 0.9;
+    letter-spacing: -0.02em;
+    color: var(--white);
+    opacity: 0;
+    animation: fadeUp 1s ease 0.4s forwards;
+  }
+  .hero-name em {
+    font-style: italic;
+    color: var(--accent);
+  }
+
+  .hero-tagline {
+    margin-top: 40px;
+    font-family: var(--serif);
+    font-size: clamp(18px, 2.5vw, 28px);
+    font-weight: 300;
+    font-style: italic;
+    color: var(--muted);
+    max-width: 600px;
+    opacity: 0;
+    animation: fadeUp 1s ease 0.6s forwards;
+  }
+
+  .hero-meta {
+    margin-top: 48px;
+    display: flex;
+    gap: 48px;
+    align-items: center;
+    opacity: 0;
+    animation: fadeUp 1s ease 0.8s forwards;
+  }
+  .hero-meta-item {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+  .hero-meta-item a { color: var(--muted); text-decoration: none; transition: color 0.3s; }
+  .hero-meta-item a:hover { color: var(--accent); }
+
+  .hero-scroll {
+    position: absolute;
+    bottom: 80px; right: 52px;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--muted);
+    text-transform: uppercase;
+    writing-mode: vertical-rl;
+    opacity: 0;
+    animation: fadeUp 1s ease 1s forwards;
+  }
+  .hero-scroll::after {
+    content: '';
+    display: block;
+    width: 1px;
+    height: 60px;
+    background: var(--muted);
+    margin: 12px auto 0;
+    animation: lineDown 1.5s ease 1.5s infinite;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes lineDown {
+    0% { transform: scaleY(0); transform-origin: top; }
+    50% { transform: scaleY(1); transform-origin: top; }
+    51% { transform: scaleY(1); transform-origin: bottom; }
+    100% { transform: scaleY(0); transform-origin: bottom; }
+  }
+
+  /* SECTION BASE */
+  section {
+    padding: 120px 52px;
+    position: relative;
+  }
+  .section-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 64px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+  .section-label::after {
+    content: '';
+    flex: 1;
+    max-width: 80px;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* ABOUT */
+  #about {
+    border-top: 1px solid var(--border);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: start;
+  }
+  .about-left {}
+  .about-statement {
+    font-family: var(--serif);
+    font-size: clamp(32px, 4vw, 56px);
+    font-weight: 300;
+    line-height: 1.2;
+    color: var(--white);
+    margin-bottom: 48px;
+  }
+  .about-statement em { font-style: italic; color: var(--accent); }
+  .about-body {
+    font-size: 15px;
+    line-height: 1.8;
+    color: var(--muted);
+    max-width: 480px;
+  }
+  .about-right {
+    padding-top: 80px;
+  }
+  .about-contact-card {
+    border: 1px solid var(--border);
+    padding: 40px;
+    background: var(--surface);
+  }
+  .contact-item {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 20px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .contact-item:last-child { border-bottom: none; }
+  .contact-label {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.25em;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+  .contact-value {
+    font-size: 14px;
+    color: var(--text);
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+  .contact-value:hover { color: var(--accent); }
+
+  /* SKILLS */
+  #skills {
+    border-top: 1px solid var(--border);
+    background: var(--bg2);
+  }
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2px;
+  }
+  .skill-block {
+    background: var(--surface);
+    padding: 48px 40px;
+    border: 1px solid var(--border);
+    transition: background 0.4s, transform 0.4s;
+    position: relative;
+    overflow: hidden;
+  }
+  .skill-block::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 3px; height: 0;
+    background: var(--accent);
+    transition: height 0.4s ease;
+  }
+  .skill-block:hover::before { height: 100%; }
+  .skill-block:hover { background: #151515; transform: translateY(-2px); }
+  .skill-block-num {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--muted);
+    margin-bottom: 24px;
+  }
+  .skill-block-title {
+    font-family: var(--serif);
+    font-size: 28px;
+    font-weight: 300;
+    color: var(--white);
+    margin-bottom: 20px;
+    line-height: 1.1;
+  }
+  .skill-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .skill-tag {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    border: 1px solid var(--border);
+    padding: 6px 14px;
+    transition: border-color 0.3s, color 0.3s;
+  }
+  .skill-block:hover .skill-tag { border-color: rgba(200,245,66,0.3); color: var(--text); }
+
+  /* EXPERIENCE */
+  #experience { border-top: 1px solid var(--border); }
+  .exp-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 80px;
+  }
+  .exp-title {
+    font-family: var(--serif);
+    font-size: clamp(48px, 6vw, 96px);
+    font-weight: 300;
+    line-height: 0.95;
+    color: var(--white);
+  }
+  .exp-title em { font-style: italic; color: var(--accent); }
+
+  .exp-entry {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 60px;
+    padding: 60px 0;
+    border-top: 1px solid var(--border);
+    position: relative;
+  }
+  .exp-entry:first-of-type { border-top: none; }
+  .exp-date-col {
+    padding-top: 6px;
+  }
+  .exp-date {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    color: var(--accent);
+    margin-bottom: 8px;
+  }
+  .exp-company {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+  }
+  .exp-content {}
+  .exp-role {
+    font-family: var(--serif);
+    font-size: 32px;
+    font-weight: 300;
+    color: var(--white);
+    margin-bottom: 8px;
+  }
+  .exp-client {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 28px;
+  }
+  .exp-bullets {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .exp-bullets li {
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--muted);
+    padding-left: 20px;
+    position: relative;
+  }
+  .exp-bullets li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-size: 11px;
+  }
+
+  /* PROJECTS */
+  #projects {
+    border-top: 1px solid var(--border);
+    background: var(--bg2);
+  }
+  .projects-intro {
+    font-family: var(--serif);
+    font-size: clamp(40px, 5vw, 76px);
+    font-weight: 300;
+    line-height: 1.05;
+    color: var(--white);
+    max-width: 700px;
+    margin-bottom: 80px;
+  }
+  .projects-intro em { font-style: italic; color: var(--accent); }
+
+  .project-item {
+    display: grid;
+    grid-template-columns: 80px 1fr auto;
+    gap: 40px;
+    align-items: start;
+    padding: 48px 0;
+    border-top: 1px solid var(--border);
+    transition: background 0.4s;
+    position: relative;
+    cursor: pointer;
+  }
+  .project-item::after {
+    content: '↗';
+    position: absolute;
+    right: 0;
+    top: 48px;
+    font-size: 20px;
+    color: var(--muted);
+    transition: color 0.3s, transform 0.3s;
+  }
+  .project-item:hover::after { color: var(--accent); transform: translate(4px, -4px); }
+  .project-num {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    color: var(--muted);
+    padding-top: 8px;
+  }
+  .project-content {}
+  .project-name {
+    font-family: var(--serif);
+    font-size: 36px;
+    font-weight: 300;
+    color: var(--white);
+    margin-bottom: 12px;
+    line-height: 1.1;
+    transition: color 0.3s;
+  }
+  .project-item:hover .project-name { color: var(--accent); }
+  .project-desc {
+    font-size: 13px;
+    line-height: 1.7;
+    color: var(--muted);
+    max-width: 560px;
+  }
+  .project-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding-top: 8px;
+    justify-content: flex-end;
+  }
+  .project-tag {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    color: var(--muted);
+    border: 1px solid var(--border);
+    padding: 5px 10px;
+    text-transform: uppercase;
+  }
+
+  /* ACHIEVEMENTS */
+  #achievements { border-top: 1px solid var(--border); }
+  .achievements-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: start;
+  }
+  .ach-left {}
+  .ach-heading {
+    font-family: var(--serif);
+    font-size: clamp(36px, 4.5vw, 68px);
+    font-weight: 300;
+    line-height: 1.1;
+    color: var(--white);
+  }
+  .ach-heading em { font-style: italic; color: var(--accent); }
+
+  .ach-right {}
+  .ach-item {
+    padding: 32px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .ach-item:first-child { padding-top: 0; }
+  .ach-score {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--accent);
+    margin-bottom: 10px;
+    text-transform: uppercase;
+  }
+  .ach-text {
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--text);
+  }
+
+  /* EDUCATION & CERTS */
+  #education {
+    border-top: 1px solid var(--border);
+    background: var(--bg2);
+  }
+  .edu-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+  }
+  .edu-block {
+    background: var(--surface);
+    padding: 60px 48px;
+    border: 1px solid var(--border);
+  }
+  .edu-block-label {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.3em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 32px;
+  }
+  .edu-degree {
+    font-family: var(--serif);
+    font-size: 28px;
+    font-weight: 300;
+    color: var(--white);
+    margin-bottom: 10px;
+    line-height: 1.2;
+  }
+  .edu-institution {
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 28px;
+    font-family: var(--mono);
+  }
+  .cert-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .cert-list li {
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--muted);
+    padding-left: 16px;
+    position: relative;
+  }
+  .cert-list li::before {
+    content: '▸';
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-size: 10px;
+    top: 2px;
+  }
+  .cert-issuer {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    color: rgba(200,245,66,0.5);
+    display: block;
+    margin-top: 4px;
+  }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 80px 52px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+  .footer-name {
+    font-family: var(--serif);
+    font-size: clamp(48px, 8vw, 120px);
+    font-weight: 300;
+    color: rgba(255,255,255,0.06);
+    line-height: 0.9;
+    letter-spacing: -0.02em;
+  }
+  .footer-right {
+    text-align: right;
+  }
+  .footer-cta {
+    font-family: var(--serif);
+    font-size: 22px;
+    font-weight: 300;
+    color: var(--white);
+    margin-bottom: 24px;
+    font-style: italic;
+  }
+  .footer-links {
+    display: flex;
+    gap: 32px;
+    justify-content: flex-end;
+  }
+  .footer-links a {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--muted);
+    text-decoration: none;
+    text-transform: uppercase;
+    transition: color 0.3s;
+  }
+  .footer-links a:hover { color: var(--accent); }
+  .footer-copy {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: rgba(255,255,255,0.15);
+    margin-top: 40px;
+  }
+
+  /* MARQUEE */
+  .marquee-wrapper {
+    overflow: hidden;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 20px 0;
+    background: var(--surface);
+  }
+  .marquee-track {
+    display: flex;
+    width: max-content;
+    animation: marquee 20s linear infinite;
+  }
+  .marquee-item {
+    font-family: var(--serif);
+    font-size: 14px;
+    font-style: italic;
+    color: var(--muted);
+    padding: 0 40px;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 40px;
+  }
+  .marquee-dot { color: var(--accent); font-style: normal; }
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+
+  /* SCROLL REVEAL */
+  .reveal {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.9s ease, transform 0.9s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* HORIZONTAL RULE ACCENT */
+  .line-accent {
+    width: 40px;
+    height: 1px;
+    background: var(--accent);
+    margin: 32px 0;
+  }
+
+  /* MOBILE */
+  @media (max-width: 768px) {
+    nav { padding: 20px 24px; }
+    .nav-links { display: none; }
+    section { padding: 80px 24px; }
+    #hero { padding: 0 24px 60px; }
+    #about { grid-template-columns: 1fr; gap: 40px; }
+    .about-right { padding-top: 0; }
+    .skills-grid { grid-template-columns: 1fr; }
+    .exp-entry { grid-template-columns: 1fr; gap: 20px; }
+    .edu-grid { grid-template-columns: 1fr; }
+    .achievements-layout { grid-template-columns: 1fr; gap: 40px; }
+    .project-item { grid-template-columns: 40px 1fr; }
+    .project-tags { display: none; }
+    footer { flex-direction: column; gap: 40px; align-items: flex-start; }
+    .footer-right { text-align: left; }
+    .footer-links { justify-content: flex-start; }
+  }
+
+  /* STAT COUNTERS */
+  .stat-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    margin-top: 80px;
+  }
+  .stat-block {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 40px 36px;
+  }
+  .stat-number {
+    font-family: var(--serif);
+    font-size: 64px;
+    font-weight: 300;
+    color: var(--accent);
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+  .stat-desc {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+
+  @media (max-width: 768px) {
+    .stat-row { grid-template-columns: 1fr; }
+  }
+</style>
 </head>
 <body>
-    <!-- Navigation -->
-    <nav class="navbar">
-        <div class="nav-container">
-            <div class="logo">PT</div>
-            <ul class="nav-links">
-                <li><a href="#home">Home</a></li>
-                <li><a href="#about">About</a></li>
-                <li><a href="#skills">Skills</a></li>
-                <li><a href="#experience">Experience</a></li>
-                <li><a href="#projects">Projects</a></li>
-                <li><a href="#contact">Contact</a></li>
-            </ul>
-            <div class="hamburger">
-                <span></span>
-                <span></span>
-                <span></span>
-            </div>
-        </div>
-    </nav>
 
-    <!-- Hero Section with 3D Effect -->
-    <section id="home" class="hero">
-        <div class="hero-background">
-            <div class="sphere sphere-1"></div>
-            <div class="sphere sphere-2"></div>
-            <div class="sphere sphere-3"></div>
-        </div>
-        <div class="hero-content">
-            <div class="hero-text">
-                <h1 class="hero-title">PAWAN TIWARI</h1>
-                <p class="hero-subtitle">Automation QA Engineer & AI Workflow Specialist</p>
-                <p class="hero-description">Enterprise Test Automation | Rovo AI | Generative AI Solutions</p>
-                <div class="hero-buttons">
-                    <button class="btn btn-primary" onclick="document.getElementById('contact').scrollIntoView({behavior: 'smooth'})">Get In Touch</button>
-                    <button class="btn btn-secondary" onclick="window.open('https://github.com/CliffBooth07')">View GitHub</button>
-                </div>
-            </div>
-            <div class="hero-3d">
-                <div class="cube">
-                    <div class="cube-face front">QA</div>
-                    <div class="cube-face back">AI</div>
-                    <div class="cube-face right">AUTO</div>
-                    <div class="cube-face left">TEST</div>
-                    <div class="cube-face top">ENGINEER</div>
-                    <div class="cube-face bottom">PAWAN</div>
-                </div>
-            </div>
-        </div>
-        <div class="scroll-indicator">
-            <div class="mouse"></div>
-        </div>
-    </section>
+<!-- CURSOR -->
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
 
-    <!-- About Section -->
-    <section id="about" class="about">
-        <div class="section-container">
-            <h2 class="section-title">About Me</h2>
-            <div class="about-content">
-                <div class="about-text">
-                    <p class="about-paragraph">
-                        I'm an <span class="highlight">Automation QA Engineer</span> with expertise in enterprise test automation, 
-                        AI-powered workflows, and Generative AI solutions. Currently at <span class="highlight">Cognizant Technology Solutions</span>, 
-                        working with <span class="highlight">Blue Shield of California</span> on healthcare automation.
-                    </p>
-                    <p class="about-paragraph">
-                        My passion lies in building <span class="highlight">scalable automation frameworks</span>, 
-                        developing <span class="highlight">AI Agents using Rovo AI</span>, and leveraging Generative AI 
-                        to improve productivity and testing efficiency across enterprise teams.
-                    </p>
-                    <div class="contact-info">
-                        <div class="info-item">
-                            <i class="fas fa-map-marker-alt"></i>
-                            <span>Haldwani, Uttarakhand</span>
-                        </div>
-                        <div class="info-item">
-                            <i class="fas fa-phone"></i>
-                            <a href="tel:+916399932472">+91 6399932472</a>
-                        </div>
-                        <div class="info-item">
-                            <i class="fas fa-envelope"></i>
-                            <a href="mailto:ptiwari3002@gmail.com">ptiwari3002@gmail.com</a>
-                        </div>
-                    </div>
-                    <div class="social-links">
-                        <a href="https://www.linkedin.com/in/pawan-tiwari-b82844198/" target="_blank">
-                            <i class="fab fa-linkedin"></i>
-                        </a>
-                        <a href="https://github.com/CliffBooth07" target="_blank">
-                            <i class="fab fa-github"></i>
-                        </a>
-                        <a href="mailto:ptiwari3002@gmail.com">
-                            <i class="fas fa-envelope"></i>
-                        </a>
-                    </div>
-                </div>
-                <div class="about-stats">
-                    <div class="stat-card">
-                        <div class="stat-number">2+</div>
-                        <div class="stat-label">Years Experience</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-number">3+</div>
-                        <div class="stat-label">Major Projects</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-number">90%+</div>
-                        <div class="stat-label">Test Coverage</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-number">924/1000</div>
-                        <div class="stat-label">Claude AI Cert</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="#">PT.QA</a>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#achievements">Achievements</a></li>
+  </ul>
+</nav>
 
-    <!-- Skills Section -->
-    <section id="skills" class="skills">
-        <div class="section-container">
-            <h2 class="section-title">Skills & Expertise</h2>
-            <div class="skills-grid">
-                <div class="skill-category">
-                    <h3>Languages & Core</h3>
-                    <div class="skill-tags">
-                        <span class="skill-tag">Python</span>
-                        <span class="skill-tag">Java</span>
-                        <span class="skill-tag">JavaScript</span>
-                        <span class="skill-tag">SQL</span>
-                        <span class="skill-tag">C++</span>
-                        <span class="skill-tag">OOP</span>
-                    </div>
-                </div>
-                <div class="skill-category">
-                    <h3>Automation & Testing</h3>
-                    <div class="skill-tags">
-                        <span class="skill-tag">Playwright</span>
-                        <span class="skill-tag">Selenium</span>
-                        <span class="skill-tag">API Testing</span>
-                        <span class="skill-tag">Postman</span>
-                        <span class="skill-tag">Framework Development</span>
-                        <span class="skill-tag">AI-Assisted Testing</span>
-                    </div>
-                </div>
-                <div class="skill-category">
-                    <h3>AI & Modern Tech</h3>
-                    <div class="skill-tags">
-                        <span class="skill-tag">Rovo AI</span>
-                        <span class="skill-tag">Generative AI</span>
-                        <span class="skill-tag">Agentic AI</span>
-                        <span class="skill-tag">Prompt Engineering</span>
-                        <span class="skill-tag">LLM Integration</span>
-                        <span class="skill-tag">Workflow Automation</span>
-                    </div>
-                </div>
-                <div class="skill-category">
-                    <h3>Tools & CI/CD</h3>
-                    <div class="skill-tags">
-                        <span class="skill-tag">Jenkins</span>
-                        <span class="skill-tag">GitHub Actions</span>
-                        <span class="skill-tag">Git</span>
-                        <span class="skill-tag">Flask</span>
-                        <span class="skill-tag">GCP</span>
-                        <span class="skill-tag">Agile/Scrum</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-bg-grid"></div>
+  <div class="hero-bg-radial"></div>
+  <div class="hero-noise"></div>
 
-    <!-- Experience Section -->
-    <section id="experience" class="experience">
-        <div class="section-container">
-            <h2 class="section-title">Work Experience</h2>
-            <div class="timeline">
-                <div class="timeline-item">
-                    <div class="timeline-marker">
-                        <div class="timeline-dot"></div>
-                    </div>
-                    <div class="timeline-content">
-                        <div class="experience-card">
-                            <div class="card-header">
-                                <h3>Programmer Analyst | Automation QA Engineer</h3>
-                                <span class="company-badge">Cognizant Technology Solutions</span>
-                            </div>
-                            <p class="date">Sept 2023 — Present</p>
-                            <ul class="experience-list">
-                                <li><strong>Client: Blue Shield of California</strong> — Developed and maintained enterprise-scale automation frameworks for 3 major healthcare portals, improving release stability</li>
-                                <li><strong>AI Agent Development</strong> — Built Rovo AI Agents for sprint analysis, bug summarization, reporting workflows, and productivity automation</li>
-                                <li>Conducted Knowledge Transfer sessions on Python Playwright for QA professionals</li>
-                                <li>Designed Python-based voice automation framework with Jenkins CI/CD integration, reducing regression effort by 50%</li>
-                                <li>Implemented AI-assisted test generation and prompt-engineering workflows to improve maintenance efficiency</li>
-                                <li>Collaborated with cross-functional Agile/Scrum teams for sprint releases and production support</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+  <div class="hero-eyebrow">Automation QA Engineer &nbsp;·&nbsp; Haldwani, Uttarakhand</div>
+  <h1 class="hero-name">Pawan<br><em>Tiwari</em></h1>
+  <p class="hero-tagline">Building scalable automation frameworks,<br>AI Agents & Generative AI solutions that move products forward.</p>
+  <div class="hero-meta">
+    <span class="hero-meta-item"><a href="mailto:ptiwari3002@gmail.com">ptiwari3002@gmail.com</a></span>
+    <span class="hero-meta-item"><a href="https://linkedin.com/in/pawan-tiwari-b82844198" target="_blank">LinkedIn</a></span>
+    <span class="hero-meta-item"><a href="https://github.com/CliffBooth07" target="_blank">GitHub</a></span>
+    <span class="hero-meta-item">+91 6399932472</span>
+  </div>
+  <div class="hero-scroll">scroll to explore</div>
+</section>
 
-    <!-- Projects Section -->
-    <section id="projects" class="projects">
-        <div class="section-container">
-            <h2 class="section-title">Featured Projects</h2>
-            <div class="projects-grid">
-                <div class="project-card">
-                    <div class="project-image" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-                        <i class="fas fa-browser"></i>
-                    </div>
-                    <div class="project-content">
-                        <h3>Broker/Prospect UI Automation</h3>
-                        <p>Engineered a scalable UI automation suite using Python and Selenium covering 90%+ critical business workflows.</p>
-                        <div class="project-stats">
-                            <span class="stat"><strong>90%+</strong> Coverage</span>
-                            <span class="stat"><strong>60%</strong> Time Saved</span>
-                        </div>
-                        <div class="tech-stack">
-                            <span class="tech">Python</span>
-                            <span class="tech">Selenium</span>
-                            <span class="tech">Jenkins</span>
-                        </div>
-                    </div>
-                </div>
+<!-- MARQUEE -->
+<div class="marquee-wrapper">
+  <div class="marquee-track">
+    <div class="marquee-item">Playwright <span class="marquee-dot">◆</span> Selenium <span class="marquee-dot">◆</span> Python <span class="marquee-dot">◆</span> Rovo AI <span class="marquee-dot">◆</span> Jenkins CI/CD <span class="marquee-dot">◆</span> Generative AI <span class="marquee-dot">◆</span> LLM Integration <span class="marquee-dot">◆</span> API Testing <span class="marquee-dot">◆</span> Agentic AI <span class="marquee-dot">◆</span> GitHub Actions</div>
+    <div class="marquee-item">Playwright <span class="marquee-dot">◆</span> Selenium <span class="marquee-dot">◆</span> Python <span class="marquee-dot">◆</span> Rovo AI <span class="marquee-dot">◆</span> Jenkins CI/CD <span class="marquee-dot">◆</span> Generative AI <span class="marquee-dot">◆</span> LLM Integration <span class="marquee-dot">◆</span> API Testing <span class="marquee-dot">◆</span> Agentic AI <span class="marquee-dot">◆</span> GitHub Actions</div>
+  </div>
+</div>
 
-                <div class="project-card">
-                    <div class="project-image" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
-                        <i class="fas fa-plug"></i>
-                    </div>
-                    <div class="project-content">
-                        <h3>API Automation Suite</h3>
-                        <p>Built an API automation suite using Python and Postman to validate 80+ endpoints with multiple payload combinations.</p>
-                        <div class="project-stats">
-                            <span class="stat"><strong>80+</strong> Endpoints</span>
-                            <span class="stat"><strong>70%</strong> Less Code</span>
-                        </div>
-                        <div class="tech-stack">
-                            <span class="tech">Python</span>
-                            <span class="tech">Postman</span>
-                            <span class="tech">REST API</span>
-                        </div>
-                    </div>
-                </div>
+<!-- ABOUT -->
+<section id="about">
+  <div class="about-left reveal">
+    <div class="section-label">01 — About</div>
+    <h2 class="about-statement">
+      Engineering<br>
+      <em>automation</em><br>
+      that scales.
+    </h2>
+    <div class="line-accent"></div>
+    <p class="about-body">
+      Automation QA Engineer at Cognizant Technology Solutions, delivering enterprise-scale test frameworks for healthcare portals and building next-generation AI Agents with Rovo AI. Passionate about the intersection of quality engineering and artificial intelligence — where robust automation meets intelligent workflows.
+    </p>
 
-                <div class="project-card">
-                    <div class="project-image" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
-                        <i class="fas fa-server"></i>
-                    </div>
-                    <div class="project-content">
-                        <h3>Linux JSON Extraction</h3>
-                        <p>Developed secure automation scripts using Paramiko for SSH-based extraction of JSON files from Linux servers.</p>
-                        <div class="project-stats">
-                            <span class="stat"><strong>75%</strong> Effort Reduced</span>
-                            <span class="stat"><strong>100%</strong> Automated</span>
-                        </div>
-                        <div class="tech-stack">
-                            <span class="tech">Python</span>
-                            <span class="tech">Paramiko</span>
-                            <span class="tech">Linux</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+    <div class="stat-row reveal">
+      <div class="stat-block">
+        <div class="stat-number">50%+</div>
+        <div class="stat-desc">Regression effort reduced</div>
+      </div>
+      <div class="stat-block">
+        <div class="stat-number">90%+</div>
+        <div class="stat-desc">Business workflow coverage</div>
+      </div>
+      <div class="stat-block">
+        <div class="stat-number">924</div>
+        <div class="stat-desc">CCA-F Score / 1000</div>
+      </div>
+    </div>
+  </div>
 
-    <!-- Achievements Section -->
-    <section id="achievements" class="achievements">
-        <div class="section-container">
-            <h2 class="section-title">Achievements & Certifications</h2>
-            <div class="achievements-grid">
-                <div class="achievement-card">
-                    <div class="achievement-icon">
-                        <i class="fas fa-trophy"></i>
-                    </div>
-                    <h3>Claude Certified Associate</h3>
-                    <p>Cleared CCA-F certification by Anthropic</p>
-                    <div class="achievement-score">Score: 924/1000</div>
-                </div>
-                <div class="achievement-card">
-                    <div class="achievement-icon">
-                        <i class="fas fa-robot"></i>
-                    </div>
-                    <h3>Rovo AI Expert</h3>
-                    <p>Built enterprise-level AI Agents for workflow automation</p>
-                    <div class="achievement-score">Team Productivity Enhanced</div>
-                </div>
-                <div class="achievement-card">
-                    <div class="achievement-icon">
-                        <i class="fas fa-graduation-cap"></i>
-                    </div>
-                    <h3>Generative AI Specialist</h3>
-                    <p>LinkedIn Learning Specialization (Microsoft-backed)</p>
-                    <div class="achievement-score">Certified</div>
-                </div>
-                <div class="achievement-card">
-                    <div class="achievement-icon">
-                        <i class="fas fa-certificate"></i>
-                    </div>
-                    <h3>Test Automation Expert</h3>
-                    <p>AS1 and AS2 Certified by Tricentis Academy</p>
-                    <div class="achievement-score">Professional Certified</div>
-                </div>
-            </div>
-        </div>
-    </section>
+  <div class="about-right reveal">
+    <div class="about-contact-card">
+      <div class="contact-item">
+        <span class="contact-label">Location</span>
+        <span class="contact-value">Haldwani, Uttarakhand, India</span>
+      </div>
+      <div class="contact-item">
+        <span class="contact-label">Email</span>
+        <a class="contact-value" href="mailto:ptiwari3002@gmail.com">ptiwari3002@gmail.com</a>
+      </div>
+      <div class="contact-item">
+        <span class="contact-label">Phone</span>
+        <a class="contact-value" href="tel:+916399932472">+91 6399932472</a>
+      </div>
+      <div class="contact-item">
+        <span class="contact-label">LinkedIn</span>
+        <a class="contact-value" href="https://linkedin.com/in/pawan-tiwari-b82844198" target="_blank">pawan-tiwari-b82844198</a>
+      </div>
+      <div class="contact-item">
+        <span class="contact-label">GitHub</span>
+        <a class="contact-value" href="https://github.com/CliffBooth07" target="_blank">CliffBooth07</a>
+      </div>
+      <div class="contact-item">
+        <span class="contact-label">Availability</span>
+        <span class="contact-value" style="color: var(--accent)">Open to opportunities</span>
+      </div>
+    </div>
+  </div>
+</section>
 
-    <!-- Education Section -->
-    <section id="education" class="education">
-        <div class="section-container">
-            <h2 class="section-title">Education</h2>
-            <div class="education-card">
-                <div class="education-header">
-                    <h3>B.Tech in Electronics and Communication Engineering</h3>
-                    <span class="education-badge">Graphic Era Hill University</span>
-                </div>
-                <div class="education-details">
-                    <p><strong>Year:</strong> 2019 — 2023</p>
-                    <p><strong>CGPA:</strong> 8.8 / 10</p>
-                </div>
-            </div>
-        </div>
-    </section>
+<!-- SKILLS -->
+<section id="skills">
+  <div class="section-label reveal">02 — Skills</div>
+  <div class="skills-grid">
+    <div class="skill-block reveal">
+      <div class="skill-block-num">01</div>
+      <div class="skill-block-title">Languages<br>& Core</div>
+      <div class="skill-tags">
+        <span class="skill-tag">Python</span>
+        <span class="skill-tag">Java</span>
+        <span class="skill-tag">JavaScript</span>
+        <span class="skill-tag">SQL</span>
+        <span class="skill-tag">C++</span>
+        <span class="skill-tag">OOP</span>
+        <span class="skill-tag">Data Structures</span>
+      </div>
+    </div>
+    <div class="skill-block reveal">
+      <div class="skill-block-num">02</div>
+      <div class="skill-block-title">Automation<br>& Testing</div>
+      <div class="skill-tags">
+        <span class="skill-tag">Playwright</span>
+        <span class="skill-tag">Selenium</span>
+        <span class="skill-tag">API Testing</span>
+        <span class="skill-tag">Postman</span>
+        <span class="skill-tag">Framework Dev</span>
+        <span class="skill-tag">AI-Assisted Testing</span>
+      </div>
+    </div>
+    <div class="skill-block reveal">
+      <div class="skill-block-num">03</div>
+      <div class="skill-block-title">AI & Modern<br>Technologies</div>
+      <div class="skill-tags">
+        <span class="skill-tag">Agentic AI</span>
+        <span class="skill-tag">Rovo AI</span>
+        <span class="skill-tag">Generative AI</span>
+        <span class="skill-tag">Prompt Engineering</span>
+        <span class="skill-tag">LLM Integration</span>
+        <span class="skill-tag">AI Workflow Automation</span>
+      </div>
+    </div>
+    <div class="skill-block reveal">
+      <div class="skill-block-num">04</div>
+      <div class="skill-block-title">Tools<br>& CI/CD</div>
+      <div class="skill-tags">
+        <span class="skill-tag">Jenkins</span>
+        <span class="skill-tag">GitHub Actions</span>
+        <span class="skill-tag">Git</span>
+        <span class="skill-tag">Flask</span>
+        <span class="skill-tag">GCP</span>
+        <span class="skill-tag">Agile/Scrum</span>
+      </div>
+    </div>
+  </div>
+</section>
 
-    <!-- Contact Section -->
-    <section id="contact" class="contact">
-        <div class="section-container">
-            <h2 class="section-title">Let's Connect</h2>
-            <div class="contact-content">
-                <div class="contact-form">
-                    <form id="contactForm">
-                        <div class="form-group">
-                            <input type="text" placeholder="Your Name" required>
-                        </div>
-                        <div class="form-group">
-                            <input type="email" placeholder="Your Email" required>
-                        </div>
-                        <div class="form-group">
-                            <textarea placeholder="Your Message" rows="5" required></textarea>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Send Message</button>
-                    </form>
-                </div>
-                <div class="contact-methods">
-                    <div class="contact-method">
-                        <i class="fas fa-envelope"></i>
-                        <a href="mailto:ptiwari3002@gmail.com">ptiwari3002@gmail.com</a>
-                    </div>
-                    <div class="contact-method">
-                        <i class="fas fa-phone"></i>
-                        <a href="tel:+916399932472">+91 6399932472</a>
-                    </div>
-                    <div class="contact-method">
-                        <i class="fab fa-linkedin"></i>
-                        <a href="https://www.linkedin.com/in/pawan-tiwari-b82844198/" target="_blank">LinkedIn</a>
-                    </div>
-                    <div class="contact-method">
-                        <i class="fab fa-github"></i>
-                        <a href="https://github.com/CliffBooth07" target="_blank">GitHub</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+<!-- EXPERIENCE -->
+<section id="experience">
+  <div class="exp-header reveal">
+    <h2 class="exp-title">Work<br><em>Experience</em></h2>
+  </div>
 
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="footer-content">
-            <p>&copy; 2024 Pawan Tiwari. All rights reserved.</p>
-            <p>Built with <span class="heart">❤️</span> using HTML, CSS & JavaScript</p>
-        </div>
-    </footer>
+  <div class="exp-entry reveal">
+    <div class="exp-date-col">
+      <div class="exp-date">Sept 2023 — Present</div>
+      <div class="exp-company">Cognizant</div>
+    </div>
+    <div class="exp-content">
+      <div class="exp-role">Programmer Analyst — Automation QA Engineer</div>
+      <div class="exp-client">Client: Blue Shield of California</div>
+      <ul class="exp-bullets">
+        <li>Developed and maintained enterprise-scale automation frameworks for 3 major healthcare portals, improving release stability and ensuring high automation coverage during production deployments.</li>
+        <li>Built and deployed enterprise AI Agents using Rovo AI to automate sprint analysis, story tracking, bug summarization, reporting workflows, and productivity tasks used across organizational teams.</li>
+        <li>Conducted Knowledge Transfer sessions on Python Playwright and automation best practices for QA professionals transitioning from manual to automation engineering.</li>
+        <li>Designed a Python-based voice automation framework integrated with Jenkins CI/CD pipelines, reducing regression execution effort by over 50%.</li>
+        <li>Implemented AI-assisted test generation and prompt-engineering-based workflows to improve automation maintenance efficiency and reduce flaky test scenarios.</li>
+        <li>Collaborated with cross-functional Agile/Scrum teams for sprint releases, defect triaging, regression validation, and production support.</li>
+      </ul>
+    </div>
+  </div>
+</section>
 
-    <script src="script.js"></script>
+<!-- PROJECTS -->
+<section id="projects">
+  <div class="section-label reveal">04 — Selected Projects</div>
+  <h2 class="projects-intro reveal">
+    Work that<br>
+    <em>reduces friction,</em><br>
+    scales teams.
+  </h2>
+
+  <div class="project-item reveal">
+    <div class="project-num">01</div>
+    <div class="project-content">
+      <div class="project-name">Broker / Prospect UI Automation</div>
+      <p class="project-desc">Engineered a scalable UI automation suite using Python and Selenium covering 90%+ critical business workflows. Integrated automation pipelines with Jenkins, reducing manual testing efforts by 60% and aligning execution with sprint releases.</p>
+    </div>
+    <div class="project-tags">
+      <span class="project-tag">Python</span>
+      <span class="project-tag">Selenium</span>
+      <span class="project-tag">Jenkins</span>
+    </div>
+  </div>
+
+  <div class="project-item reveal">
+    <div class="project-num">02</div>
+    <div class="project-content">
+      <div class="project-name">API Automation Suite</div>
+      <p class="project-desc">Built an API automation suite using Python and Postman to validate 80+ endpoints with multiple payload combinations. Developed reusable framework utilities separating business logic from test data, reducing code duplication by 70%.</p>
+    </div>
+    <div class="project-tags">
+      <span class="project-tag">Python</span>
+      <span class="project-tag">Postman</span>
+      <span class="project-tag">REST API</span>
+    </div>
+  </div>
+
+  <div class="project-item reveal">
+    <div class="project-num">03</div>
+    <div class="project-content">
+      <div class="project-name">Linux-Based JSON Extraction</div>
+      <p class="project-desc">Developed secure automation scripts using Paramiko for SSH-based extraction of JSON files from Linux servers. Automated backend consistency validation processes, reducing manual verification effort by 75%.</p>
+    </div>
+    <div class="project-tags">
+      <span class="project-tag">Paramiko</span>
+      <span class="project-tag">Python</span>
+      <span class="project-tag">Linux</span>
+      <span class="project-tag">SSH</span>
+    </div>
+  </div>
+
+  <div class="project-item reveal">
+    <div class="project-num">04</div>
+    <div class="project-content">
+      <div class="project-name">Enterprise AI Agent Platform (Rovo AI)</div>
+      <p class="project-desc">Built and deployed production AI Agents using Rovo AI to automate sprint analysis, story tracking, bug summarization, and reporting workflows — adopted across multiple teams within the organization.</p>
+    </div>
+    <div class="project-tags">
+      <span class="project-tag">Rovo AI</span>
+      <span class="project-tag">Agentic AI</span>
+      <span class="project-tag">Automation</span>
+    </div>
+  </div>
+</section>
+
+<!-- ACHIEVEMENTS -->
+<section id="achievements">
+  <div class="achievements-layout">
+    <div class="ach-left reveal">
+      <div class="section-label">05 — Achievements</div>
+      <h2 class="ach-heading">
+        Certified.<br>
+        <em>Recognized.</em><br>
+        Impactful.
+      </h2>
+    </div>
+    <div class="ach-right reveal">
+      <div class="ach-item">
+        <div class="ach-score">Score: 924 / 1000</div>
+        <div class="ach-text">Cleared Claude Certified Associate – Foundations (CCA-F) certification by Anthropic — one of the first practitioners to demonstrate proficiency in Claude AI systems.</div>
+      </div>
+      <div class="ach-item">
+        <div class="ach-score">Enterprise Scale</div>
+        <div class="ach-text">Built enterprise-level AI Agents using Rovo AI for workflow automation and productivity enhancement, adopted across organizational teams at Cognizant.</div>
+      </div>
+      <div class="ach-item">
+        <div class="ach-score">Leadership</div>
+        <div class="ach-text">Led Playwright Knowledge Transfer sessions for experienced QA professionals transitioning into automation and Quality Engineering — upskilling the team from manual to modern automation.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EDUCATION & CERTS -->
+<section id="education">
+  <div class="section-label reveal">06 — Education & Certifications</div>
+  <div class="edu-grid">
+    <div class="edu-block reveal">
+      <div class="edu-block-label">Education</div>
+      <div class="edu-degree">B.Tech in Electronics<br>& Communication Engineering</div>
+      <div class="edu-institution">Graphic Era Hill University</div>
+    </div>
+    <div class="edu-block reveal">
+      <div class="edu-block-label">Certifications</div>
+      <ul class="cert-list">
+        <li>
+          Claude Certified Associate – Foundations (CCA-F)
+          <span class="cert-issuer">Anthropic · Score 924/1000</span>
+        </li>
+        <li>
+          Generative AI Specialization
+          <span class="cert-issuer">LinkedIn Learning (Microsoft-backed)</span>
+        </li>
+        <li>
+          AS1 & AS2 Certified
+          <span class="cert-issuer">Tricentis Academy · Test Automation</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-name">Pawan<br>Tiwari</div>
+  <div class="footer-right">
+    <div class="footer-cta">Let's build something remarkable.</div>
+    <div class="footer-links">
+      <a href="mailto:ptiwari3002@gmail.com">Email</a>
+      <a href="https://linkedin.com/in/pawan-tiwari-b82844198" target="_blank">LinkedIn</a>
+      <a href="https://github.com/CliffBooth07" target="_blank">GitHub</a>
+    </div>
+    <div class="footer-copy">© 2025 Pawan Tiwari · Automation QA Engineer</div>
+  </div>
+</footer>
+
+<script>
+  // CURSOR
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursorRing');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+
+  document.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    cursor.style.left = mx + 'px';
+    cursor.style.top = my + 'px';
+  });
+
+  function animateRing() {
+    rx += (mx - rx) * 0.12;
+    ry += (my - ry) * 0.12;
+    ring.style.left = rx + 'px';
+    ring.style.top = ry + 'px';
+    requestAnimationFrame(animateRing);
+  }
+  animateRing();
+
+  document.querySelectorAll('a, button, .project-item, .skill-block').forEach(el => {
+    el.addEventListener('mouseenter', () => ring.classList.add('hover'));
+    el.addEventListener('mouseleave', () => ring.classList.remove('hover'));
+  });
+
+  // SCROLL REVEAL
+  const revealEls = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => entry.target.classList.add('visible'), i * 60);
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -60px 0px' });
+
+  revealEls.forEach(el => observer.observe(el));
+
+  // NAV SCROLL STYLE
+  const nav = document.querySelector('nav');
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 80) {
+      nav.style.backdropFilter = 'blur(20px)';
+      nav.style.background = 'rgba(5,5,5,0.85)';
+      nav.style.borderBottom = '1px solid rgba(255,255,255,0.06)';
+    } else {
+      nav.style.backdropFilter = '';
+      nav.style.background = '';
+      nav.style.borderBottom = '';
+    }
+  });
+
+  // COUNTER ANIMATION
+  function animateCounter(el, target, suffix = '') {
+    let start = 0;
+    const duration = 1800;
+    const step = timestamp => {
+      if (!start) start = timestamp;
+      const progress = Math.min((timestamp - start) / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      el.textContent = Math.floor(eased * target) + suffix;
+      if (progress < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  }
+
+  const statObserver = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const nums = entry.target.querySelectorAll('.stat-number');
+        nums.forEach(n => {
+          const raw = n.textContent;
+          if (raw.includes('924')) animateCounter(n, 924, '');
+          else if (raw.includes('50')) { n.textContent = '50%+'; }
+          else if (raw.includes('90')) { n.textContent = '90%+'; }
+        });
+        statObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.5 });
+
+  document.querySelectorAll('.stat-row').forEach(el => statObserver.observe(el));
+</script>
 </body>
 </html>
